@@ -1,99 +1,238 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Employee SaaS Backend (NestJS) Architecture
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 📦 Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This project models contractor-based workforce management inspired by government forms:
 
-## Description
+* Muster Roll (Form XVI)
+* Wage Slip (Form XIX)
+* Registers (Fines, Advances, Deductions)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+The system is designed using **modular NestJS architecture** and **relational database modeling (TypeORM)**.
 
-## Project setup
+---
 
-```bash
-$ npm install
+## 🧱 Modules
+
+```
+src/
+ ├── principal-employer/   ✅ (NEW)
+ ├── contractor/
+ ├── worksite/             ✅ (NEW)
+ ├── employee/
+ ├── employment/
+ ├── muster/
+ ├── wages/
+ ├── advances/
+ ├── fines/
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## 🧠 Core Entities
 
-# watch mode
-$ npm run start:dev
+### 1. PrincipalEmployer
 
-# production mode
-$ npm run start:prod
+* Company for whom work is performed (e.g., JK Tyre)
+* Can have multiple contractors
+
+### 2. Contractor
+
+* Works under a principal employer
+* Manages employees and worksites
+
+### 3. Worksite
+
+* Physical location of work
+* Shared across muster, wages, employment
+
+### 4. Employee
+
+* Worker details
+* Linked to contractor
+
+### 5. Employment
+
+* Tracks employment duration
+* Links employee + contractor + worksite
+
+### 6. Muster (Attendance)
+
+* Daily attendance tracking
+* Source for payroll calculation
+
+### 7. Wage
+
+* Monthly payroll record
+* Aggregated from muster
+
+### 8. WageSlip
+
+* Employee-level breakdown (Form XIX)
+
+### 9. Deduction
+
+* PF, ESI, penalties, etc.
+
+### 10. Fine
+
+* Register of fines
+
+### 11. Advance
+
+* Salary advances
+
+---
+
+## 🔗 Entity Relationships Diagram
+
+```mermaid
+erDiagram
+    PRINCIPAL_EMPLOYER ||--o{ CONTRACTOR : has
+
+    CONTRACTOR ||--o{ WORKSITE : operates
+    CONTRACTOR ||--o{ EMPLOYEE : employs
+    CONTRACTOR ||--o{ EMPLOYMENT : manages
+    CONTRACTOR ||--o{ MUSTER : owns
+    CONTRACTOR ||--o{ WAGE : processes
+
+    WORKSITE ||--o{ MUSTER : used_in
+    WORKSITE ||--o{ EMPLOYMENT : assigned_to
+    WORKSITE ||--o{ WAGE : applied_to
+
+    EMPLOYEE ||--o{ EMPLOYMENT : has
+    EMPLOYEE ||--o{ MUSTER : marks
+    EMPLOYEE ||--o{ WAGE_SLIP : receives
+    EMPLOYEE ||--o{ ADVANCE : takes
+    EMPLOYEE ||--o{ FINE : incurs
+
+    EMPLOYMENT }o--|| EMPLOYEE : belongs_to
+    EMPLOYMENT }o--|| CONTRACTOR : belongs_to
+    EMPLOYMENT }o--|| WORKSITE : assigned_to
+
+    MUSTER }o--|| EMPLOYEE : for
+    MUSTER }o--|| WORKSITE : at
+
+    WAGE ||--o{ WAGE_SLIP : contains
+    WAGE }o--|| WORKSITE : for
+
+    WAGE_SLIP }o--|| EMPLOYEE : for
+    WAGE_SLIP ||--o{ DEDUCTION : has
+
+    DEDUCTION }o--|| WAGE_SLIP : applied_to
+
+    ADVANCE }o--|| EMPLOYEE : belongs_to
+    FINE }o--|| EMPLOYEE : belongs_to
 ```
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ npm run test
+## 📊 Data Flow
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```
+MUSTER → WAGE → WAGE SLIP → DEDUCTIONS
+                     ↓
+                ADVANCES / FINES
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 🏗 Module Responsibilities
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### principal-employer
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+* Manage company details
+* Link contractors
+
+### contractor
+
+* Manage contractor details
+* Link employees and worksites
+
+### worksite
+
+* Manage work locations
+* Used by muster, employment, wages
+
+### employee
+
+* Manage worker records
+
+### employment
+
+* Track employment lifecycle
+
+### muster
+
+* Attendance tracking (daily)
+
+### wages
+
+* Payroll processing
+* Wage + WageSlip + Deduction logic
+
+### advances
+
+* Salary advances tracking
+
+### fines
+
+* Penalty tracking
+
+---
+
+## 📁 Suggested Folder Structure (Wages)
+
+```
+wages/
+ ├── entities/
+ │    ├── wage.entity.ts
+ │    ├── wage-slip.entity.ts
+ │    └── deduction.entity.ts
+ ├── dto/
+ ├── services/
+ │    └── payroll.service.ts
+ ├── wages.service.ts
+ ├── wages.controller.ts
+ └── wages.module.ts
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## ⚡ Key Design Decisions
 
-Check out a few resources that may come in handy when working with NestJS:
+* WageSlip is **child of Wage** (not separate module)
+* Deduction tightly coupled with WageSlip
+* Muster drives payroll calculations
+* Employee is central node across all modules
+* PrincipalEmployer and Worksite modeled as independent entities for scalability
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## 🧠 Scalability Notes
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+* Add `PayrollService` for complex calculations
+* Use transactions for wage generation
+* Index employeeId, contractorId, worksiteId
+* Normalize deduction types if needed
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 🚀 Future Enhancements
 
-## License
+* Multi-tenant support (per principal employer)
+* Role-based access control
+* Report generation (PDF for forms)
+* Audit logs
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-# emp-saas-backend
+---
+
+## ✅ Summary
+
+* Model real-world entities, not just form fields
+* Keep tightly coupled entities in same module
+* Use relations instead of duplication
+
+---
+
+Next step: build payroll engine + automated wage slip generation 🚀

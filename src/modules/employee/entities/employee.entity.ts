@@ -1,0 +1,32 @@
+import { Employment } from 'src/modules/employment/entities/employment.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity()
+export class Employee {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column()
+  name!: string;
+
+  @Column()
+  fatherName!: string;
+
+  @Column()
+  gender!: string;
+
+  @Column({ nullable: true })
+  dob!: Date;
+
+  @Column({ nullable: true })
+  identificationMark!: string;
+
+  @Column({ nullable: true })
+  uan!: string;
+
+  @Column({ nullable: true })
+  esic!: string;
+
+  @OneToMany(() => Employment, (e) => e.employee)
+  employments!: Employment[];
+}
