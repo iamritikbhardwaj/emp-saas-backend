@@ -1,10 +1,16 @@
 import { Employee } from 'src/modules/employee/entities/employee.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Deduction {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
   @ManyToOne(() => Employee)
   employee!: Employee;
@@ -12,9 +18,14 @@ export class Deduction {
   @Column()
   type!: string; // PF | ESI | DAMAGE | etc
 
-  @Column()
+  @Column({
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
   amount!: number;
 
-  @Column()
+  @CreateDateColumn()
   date!: Date;
 }

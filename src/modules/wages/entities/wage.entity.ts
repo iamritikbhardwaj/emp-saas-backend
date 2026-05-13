@@ -4,8 +4,8 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Wage {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
   @ManyToOne(() => Employee)
   employee!: Employee;
@@ -19,17 +19,35 @@ export class Wage {
   @Column()
   totalDaysWorked!: number;
 
-  @Column()
+  @Column({
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
   basicWages!: number;
 
-  @Column({ default: 0 })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0,
+  })
   overtimeWages!: number;
 
-  @Column()
+  @Column({
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
   grossWages!: number;
 
-  @Column()
+  @Column({
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
   netWages!: number;
 }
-
-// ! wageslip entity is pending

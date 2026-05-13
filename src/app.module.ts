@@ -12,7 +12,10 @@ import { WagesModule } from './modules/wages/wages.module';
 import { AdvancesModule } from './modules/advances/advances.module';
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     TypeOrmModule.forRoot(typeOrmConfig),
     ContractorModule,
     EmployeeModule,

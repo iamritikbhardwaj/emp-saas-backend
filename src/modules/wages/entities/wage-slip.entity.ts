@@ -1,23 +1,24 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Wage } from './wage.entity';
+import { Double } from 'typeorm/browser';
 
 @Entity()
 export class WageSlip {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
   @OneToOne(() => Wage)
   @JoinColumn()
   wage!: Wage;
 
-  @Column()
+  @CreateDateColumn()
   generatedAt!: Date;
 
   @Column()
@@ -26,12 +27,27 @@ export class WageSlip {
   @Column()
   daysWorked!: number;
 
-  @Column()
-  grossWages!: number;
+  @Column({
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
+  grossWages!: Double;
 
-  @Column()
-  deductions!: number;
+  @Column({
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
+  deductions!: Double;
 
-  @Column()
-  netWages!: number;
+  @Column({
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
+  netWages!: Double;
 }

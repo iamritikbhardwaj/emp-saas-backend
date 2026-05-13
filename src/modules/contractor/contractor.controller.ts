@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { ContractorService } from './contractor.service';
 import { CreateContractorDto } from './dto/create-contractor.dto';
 import { UpdateContractorDto } from './dto/update-contractor.dto';
@@ -13,22 +22,25 @@ export class ContractorController {
   }
 
   @Get()
-  findAll() {
-    return this.contractorService.findAll();
+  findAll(@Query('take') take: number, @Query('page') page: number) {
+    return this.contractorService.findAll(take, page);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.contractorService.findOne(+id);
+    return this.contractorService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateContractorDto: UpdateContractorDto) {
-    return this.contractorService.update(+id, updateContractorDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateContractorDto: UpdateContractorDto,
+  ) {
+    return this.contractorService.update(id, updateContractorDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.contractorService.remove(+id);
+    return this.contractorService.remove(id);
   }
 }

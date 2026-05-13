@@ -1,15 +1,22 @@
 import { Employee } from 'src/modules/employee/entities/employee.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Double } from 'typeorm';
 
 @Entity()
 export class Advance {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
   @ManyToOne(() => Employee)
   employee!: Employee;
 
-  @Column()
+  // In your Advance entity
+  @Column({
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
   amount!: number;
 
   @Column()

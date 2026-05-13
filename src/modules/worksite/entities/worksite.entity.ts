@@ -11,8 +11,8 @@ import {
 
 @Entity()
 export class Worksite {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
   @Column()
   name!: string;

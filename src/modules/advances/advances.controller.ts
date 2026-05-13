@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { AdvancesService } from './advances.service';
 import { CreateAdvanceDto } from './dto/create-advance.dto';
 import { UpdateAdvanceDto } from './dto/update-advance.dto';
@@ -13,22 +22,22 @@ export class AdvancesController {
   }
 
   @Get()
-  findAll() {
-    return this.advancesService.findAll();
+  findAll(@Query('take') take: number, @Query('page') page: number) {
+    return this.advancesService.findAll(take, page);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.advancesService.findOne(+id);
+    return this.advancesService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAdvanceDto: UpdateAdvanceDto) {
-    return this.advancesService.update(+id, updateAdvanceDto);
+    return this.advancesService.update(id, updateAdvanceDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.advancesService.remove(+id);
+    return this.advancesService.remove(id);
   }
 }
