@@ -1,7 +1,7 @@
 import { IsNumber, IsString } from 'class-validator';
 import { Double } from 'typeorm';
 
-class CreateWageSlipDto {
+export class CreateWageSlipDto {
   @IsString()
   employeeName!: string;
 

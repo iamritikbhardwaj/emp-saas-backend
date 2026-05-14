@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { MusterService } from './muster.service';
 import { CreateMusterDto } from './dto/create-muster.dto';
 import { UpdateMusterDto } from './dto/update-muster.dto';
@@ -13,8 +22,8 @@ export class MusterController {
   }
 
   @Get()
-  findAll() {
-    return this.musterService.findAll();
+  findAll(@Query('take') take: number, @Query('page') page: number) {
+    return this.musterService.findAll(take, page);
   }
 
   @Get(':id')

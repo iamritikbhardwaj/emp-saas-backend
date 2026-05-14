@@ -16,33 +16,32 @@ export class ContractorService {
     private readonly contractorRepository: Repository<Contractor>,
   ) {}
   async create(createContractorDto: CreateContractorDto): Promise<Contractor> {
-    let contractor: Contractor;
+    let contractor: Contractor | null;
+    const existingContractor = await this.contractorRepository.findOne({
+      where: { registrationNumber: createContractorDto.registrationNumber },
+    });
+    if (existingContractor) {
+      throw new ConflictException(
+        'Contractor with this registration number already exists',
+      );
+    }
     try {
-      const existingContractor = await this.contractorRepository.findOne({
-        where: { name: createContractorDto.name },
-      });
-      if (!existingContractor) {
-        throw new ConflictException('Contractor with this name already exists');
-      }
       contractor = this.contractorRepository.create(createContractorDto);
-      await this.contractorRepository.save(contractor);
+      contractor = await this.contractorRepository.save(contractor);
     } catch (error) {
       throw new Error('Error creating contractor');
     }
     return contractor;
   }
 
-  async findAll(take = 10, page = 1): Promise<[Contractor[], number]> {
-    const skip = (page - 1) * take;
+  async findAll(take: number, page: number): Promise<[Contractor[], number]> {
     let contractors: [Contractor[], number];
+    const skip = (page - 1) * take;
     try {
       contractors = await this.contractorRepository.findAndCount({
-        take: take,
-        skip: skip,
+        take,
+        skip,
       });
-      if (contractors[1] === 0) {
-        throw new NotFoundException('No contractors found');
-      }
     } catch (error) {
       throw new Error('Error fetching contractors');
     }

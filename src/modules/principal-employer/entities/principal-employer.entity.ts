@@ -1,4 +1,4 @@
-import { Worksite } from 'src/modules/worksite/entities/worksite.entity';
+import { Worksite } from '../../worksite/entities/worksite.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

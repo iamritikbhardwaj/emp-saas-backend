@@ -1,6 +1,6 @@
-import { Contractor } from 'src/modules/contractor/entities/contractor.entity';
-import { Employment } from 'src/modules/employment/entities/employment.entity';
-import { PrincipalEmployer } from 'src/modules/principal-employer/entities/principal-employer.entity';
+import { Contractor } from '../../contractor/entities/contractor.entity';
+import { Employment } from '../../employment/entities/employment.entity';
+import { PrincipalEmployer } from '../../principal-employer/entities/principal-employer.entity';
 import {
   Column,
   Entity,

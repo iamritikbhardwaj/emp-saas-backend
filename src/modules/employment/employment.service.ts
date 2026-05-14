@@ -1,26 +1,83 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmploymentDto } from './dto/create-employment.dto';
 import { UpdateEmploymentDto } from './dto/update-employment.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Employment } from './entities/employment.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class EmploymentService {
-  create(createEmploymentDto: CreateEmploymentDto) {
-    return 'This action adds a new employment';
+  constructor(
+    @InjectRepository(Employment)
+    private readonly employmentRepository: Repository<Employment>,
+  ) {}
+  async create(createEmploymentDto: CreateEmploymentDto): Promise<Employment> {
+    let employment: Employment | null;
+    try {
+      employment = this.employmentRepository.create(createEmploymentDto);
+      employment = await this.employmentRepository.save(employment);
+    } catch (error) {
+      throw new Error('Error creating employment');
+    }
+    return employment;
   }
 
-  findAll() {
-    return `This action returns all employment`;
+  async findAll(take: number, page: number): Promise<[Employment[], number]> {
+    let employments: [Employment[], number];
+    const skip = (page - 1) * take;
+    try {
+      employments = await this.employmentRepository.findAndCount({
+        take,
+        skip,
+      });
+    } catch (error) {
+      throw new Error('Error fetching employments');
+    }
+    return employments;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} employment`;
+  async findOne(id: number): Promise<Employment> {
+    let employment: Employment | null;
+    try {
+      employment = await this.employmentRepository.findOne({ where: { id } });
+      if (employment === null) {
+        throw new NotFoundException('Employment not found');
+      }
+    } catch (error) {
+      throw new Error('Error fetching employment');
+    }
+    return employment;
   }
 
-  update(id: number, updateEmploymentDto: UpdateEmploymentDto) {
-    return `This action updates a #${id} employment`;
+  async update(
+    id: number,
+    updateEmploymentDto: UpdateEmploymentDto,
+  ): Promise<Employment> {
+    let employment: Employment | null;
+    try {
+      employment = await this.employmentRepository.findOne({ where: { id } });
+      if (employment === null) {
+        throw new NotFoundException('Employment not found');
+      }
+      Object.assign(employment, updateEmploymentDto);
+      await this.employmentRepository.save(employment);
+    } catch (error) {
+      throw new Error('Error updating employment');
+    }
+    return employment;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} employment`;
+  async remove(id: number): Promise<boolean> {
+    let employment: Employment | null;
+    try {
+      employment = await this.employmentRepository.findOne({ where: { id } });
+      if (employment === null) {
+        throw new NotFoundException('Employment not found');
+      }
+      await this.employmentRepository.remove(employment);
+    } catch (error) {
+      throw new Error('Error removing employment');
+    }
+    return true;
   }
 }

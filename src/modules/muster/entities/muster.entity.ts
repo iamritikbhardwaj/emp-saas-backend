@@ -1,5 +1,5 @@
-import { Employee } from 'src/modules/employee/entities/employee.entity';
-import { Worksite } from 'src/modules/worksite/entities/worksite.entity';
+import { Employee } from '../../employee/entities/employee.entity';
+import { Worksite } from '../../worksite/entities/worksite.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

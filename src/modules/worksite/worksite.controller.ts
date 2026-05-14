@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { WorksiteService } from './worksite.service';
 import { CreateWorksiteDto } from './dto/create-worksite.dto';
 import { UpdateWorksiteDto } from './dto/update-worksite.dto';
@@ -13,22 +22,25 @@ export class WorksiteController {
   }
 
   @Get()
-  findAll() {
-    return this.worksiteService.findAll();
+  findAll(@Query('take') take: number, @Query('page') page: number) {
+    return this.worksiteService.findAll(take, page);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.worksiteService.findOne(+id);
+    return this.worksiteService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWorksiteDto: UpdateWorksiteDto) {
-    return this.worksiteService.update(+id, updateWorksiteDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateWorksiteDto: UpdateWorksiteDto,
+  ) {
+    return this.worksiteService.update(id, updateWorksiteDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.worksiteService.remove(+id);
+    return this.worksiteService.remove(id);
   }
 }

@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { FinesService } from './fines.service';
 import { CreateFineDto } from './dto/create-fine.dto';
 import { UpdateFineDto } from './dto/update-fine.dto';
@@ -13,8 +22,8 @@ export class FinesController {
   }
 
   @Get()
-  findAll() {
-    return this.finesService.findAll();
+  findAll(@Query('take') take: number, @Query('page') page: number) {
+    return this.finesService.findAll(take, page);
   }
 
   @Get(':id')

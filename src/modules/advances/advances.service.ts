@@ -25,7 +25,7 @@ export class AdvancesService {
     }
     try {
       advance = this.advanceRepository.create(createAdvanceDto);
-      this.advanceRepository.save(advance);
+      advance = await this.advanceRepository.save(advance);
     } catch (error) {
       throw new Error('Error creating advance');
     }
