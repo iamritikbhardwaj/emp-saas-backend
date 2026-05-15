@@ -6,6 +6,7 @@ import {
   IsNumber,
   Min,
   IsPhoneNumber,
+  MinLength,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -30,6 +31,11 @@ export class CreateContractorDto {
   // --- Contact Information ---
   @IsEmail()
   email!: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(8)
+  password?: string;
 
   @IsString()
   @IsNotEmpty()

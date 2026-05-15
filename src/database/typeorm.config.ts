@@ -9,6 +9,7 @@ import { Muster } from '../modules/muster/entities/muster.entity';
 import { PrincipalEmployer } from '../modules/principal-employer/entities/principal-employer.entity';
 import { Wage } from '../modules/wages/entities/wage.entity';
 import { Worksite } from '../modules/worksite/entities/worksite.entity';
+import { AdminUser } from '../modules/auth/entities/admin-user.entity';
 dotenv.config();
 
 export const typeOrmConfig: TypeOrmModuleOptions = {
@@ -30,6 +31,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
     PrincipalEmployer,
     Wage,
     Worksite,
+    AdminUser,
   ],
   ssl: {
     rejectUnauthorized: false,

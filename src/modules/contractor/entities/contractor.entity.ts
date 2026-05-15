@@ -13,6 +13,9 @@ export class Contractor {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Column({ default: 'pending' })
+  status!: 'active' | 'pending' | 'suspended';
+
   // --- Company Information ---
   @Column()
   companyName!: string;
@@ -29,6 +32,9 @@ export class Contractor {
   // --- Contact Information ---
   @Column()
   email!: string;
+
+  @Column({ nullable: true })
+  password?: string;
 
   @Column()
   phone!: string;
@@ -51,6 +57,22 @@ export class Contractor {
 
   @Column()
   pincode!: string;
+
+  // --- Work and Principal Employer Details ---
+  @Column({ nullable: true })
+  workLocation!: string;
+
+  @Column({ nullable: true })
+  principalEmployer!: string;
+
+  @Column({ nullable: true })
+  principalEmployerAddress!: string;
+
+  @Column({ nullable: true })
+  establishmentName!: string;
+
+  @Column({ nullable: true })
+  establishmentAddress!: string;
 
   // --- Primary Contact Person ---
   @Column()

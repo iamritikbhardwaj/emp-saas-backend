@@ -22,8 +22,12 @@ export class ContractorController {
   }
 
   @Get()
-  findAll(@Query('take') take: number, @Query('page') page: number) {
-    return this.contractorService.findAll(take, page);
+  findAll(
+    @Query('take') take: number,
+    @Query('page') page: number,
+    @Query('search') searchQuery: string,
+  ) {
+    return this.contractorService.findAll(take, page, searchQuery);
   }
 
   @Get(':id')

@@ -27,6 +27,12 @@ export class Employee {
   @Column({ nullable: true })
   esic!: string;
 
+  @Column({ nullable: true })
+  permanentAddress!: string;
+
+  @Column({ nullable: true })
+  presentAddress!: string;
+
   @OneToMany(() => Employment, (e) => e.employee)
   employments!: Employment[];
 }
